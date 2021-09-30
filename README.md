@@ -1,14 +1,21 @@
-# Project
+# Feast on Azure
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+This project provides resources to enable running a [feast](http://feast.dev) feature store on Azure.
 
-As the maintainer of this project, please make a few updates:
+## Feast Azure Provider
+The [Feast Azure provider](./provider/README.md) acts like a plugin that allows Feast users to connect to:
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+- Azure SQL DB and/or Synapse SQL as the _offline store_
+- Azure cache for Redis as the _online store_
+- Azure blob storage for the feast _registry store_
+
+### 📐 Architecture
+
+The _interoperable_ design of feast means that many Azure services can be used to _produce_ and/or _consume_ features (for example: Azure ML, Synapse, Azure Databricks, Azure functions, etc).
+
+![azure provider architecture](provider/media/arch.png)
+
+For more details, including setup please navigate to the [provider directory in this repo](./provider/README.md)
 
 ## Contributing
 

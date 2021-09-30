@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from typing import (
@@ -43,8 +46,8 @@ class MsSqlServerOfflineStoreConfig(FeastBaseModel):
     """Offline store config for SQL Server"""
 
     type: Literal[
-        "azure_feast.mssqlserver.MsSqlServerOfflineStore"
-    ] = "azure_feast.mssqlserver.MsSqlServerOfflineStore"
+        "feast_azure_provider.mssqlserver.MsSqlServerOfflineStore"
+    ] = "feast_azure_provider.mssqlserver.MsSqlServerOfflineStore"
     """ Offline store type selector"""
 
     connection_string: StrictStr = "mssql+pyodbc://sa:yourStrong(!)Password@localhost:1433/feast_test?driver=ODBC+Driver+17+for+SQL+Server"
@@ -75,7 +78,7 @@ class MsSqlServerOfflineStore(OfflineStore):
         assert type(data_source).__name__ == "MsSqlServerSource"
         assert (
             config.offline_store.type
-            == "azure_feast.mssqlserver.MsSqlServerOfflineStore"
+            == "feast_azure_provider.mssqlserver.MsSqlServerOfflineStore"
         )
         from_expression = data_source.get_table_query_string().replace("`", "")
 
