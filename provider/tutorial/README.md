@@ -34,8 +34,6 @@ You should give the compute instance a name and choose a size (Standard_DS3_v2 i
 In your compute instance, open a terminal, git clone this repo and then:
 
 ```bash
-cd feast-azure-provider
-pip install code/.
 conda create -n feast-tutorial python=3.8
 conda activate feast-tutorial
 conda install ipykernel
@@ -128,7 +126,7 @@ You need a blob account to host the registry.db file - this stores the feature m
 
 ```bash
 # a blob account name
-storageAccountName=fsblob-$RANDOM
+storageAccountName=fsblob$RANDOM
 echo "Variable storageAccountName is set to $storageAccountName"
 
 az storage account create \
@@ -145,7 +143,7 @@ Next create the container and assign _Storage Blob Data Contributor_ role to you
 # a container name
 containerName=feast-registry
 
-subId=$(az account show --query id)
+subId=$(az account show --query id | sed -e 's/^"//' -e 's/"$//')
 
 az ad signed-in-user show --query objectId -o tsv | az role assignment create \
     --role "Storage Blob Data Contributor" \
@@ -190,9 +188,9 @@ python load_data.py
 
 ## Register features in Feature store
 
-Follow the `notebooks/register_features` notebook to register features into the central feast registry.db file.
+Follow the `notebooks/01-register-features.ipynb` notebook to register features into the central feast registry.db file.
 
 ## Train and Deploy a model using the Feature Store
 
-Follow the `notebooks/train_and_deploy_with_feast` notebook to understand how to train and deploy a model using feast.
+Follow the `notebooks/02-train-and-deploy-with-feast` notebook to understand how to train and deploy a model using feast.
 

@@ -1,4 +1,5 @@
 azureml-core
 azureml-mlflow
 scikit-learn
+feast-azure-provider
 
