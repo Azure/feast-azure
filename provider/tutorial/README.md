@@ -34,6 +34,7 @@ You should give the compute instance a name and choose a size (Standard_DS3_v2 i
 In your compute instance, open a terminal, git clone this repo and then:
 
 ```bash
+cd feast-azure/provider/tutorial
 conda create -n feast-tutorial python=3.8
 conda activate feast-tutorial
 conda install ipykernel
