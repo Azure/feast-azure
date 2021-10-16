@@ -15,8 +15,6 @@ The _interoperable_ design of feast means that many Azure services can be used t
 
 ![azure provider architecture](provider/media/arch.png)
 
-For more details, including setup please navigate to the [provider directory in this repo](./provider/README.md)
-
 ### 🐱‍👤 Getting Started
 
 If you want to install locally:
@@ -25,7 +23,7 @@ If you want to install locally:
 pip install feast-azure-provider
 ```
 
-We recommend the [getting started tutorial](./provider/tutorial/README.md) that walks you through an end-to-end example.
+We recommend the [getting started tutorial](provider/tutorial/) that walks you through an end-to-end example.
 
 You can deploy the infrastructure for feast using:
 
