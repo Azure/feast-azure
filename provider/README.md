@@ -14,130 +14,27 @@ The _interoperable_ design of feast means that many Azure services can be used t
 
 ## 🐱‍👤 Getting Started
 
-### Pre-requisites
-
-You will need to have:
-
-- An Azure account with an active subscription. 
-    - Don't have an Account? [You can create an Azure account with $200 free credit](https://azure.microsoft.com/free/).
-- Either an Azure SQL DB or Synapse SQL
-- A provisioned Azure Cache for Redis
-- An Azure Storage Account
-
-### 1. Install Feast Azure Provider
-Install the provider using `pip` (we recommend using either conda or virtualenv for environment isolation):
+If you want to install locally:
 
 ```bash
 pip install feast-azure-provider
 ```
 
-> **Note**
-There is a dependency on the `unixodbc` operating system package. You can install this on Debian/Ubuntu using `sudo apt-get install unixodbc-dev`
- 
-### 2. Create a feature repository
+We recommend the [getting started tutorial](./tutorial/README.md) that walks you through an end-to-end example.
+
+You can deploy the infrastructure for feast using:
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Ffeast-azure%2Fmain%2Fprovider%2Ftutorial%2Fsetup%2Fazuredeploy.json)
+
+The only 2 required parameters during the set-up are:
+
+- **Admin Password** for the the SQL Server being deployed.
+- **Principal ID** this is to set the storage permissions for the feast registry store. You can find the value for this by opening **Cloud Shell** and run the following command:
 
 ```bash
-feast init -m my_feature_repo
-cd my_feature_repo
+az ad signed-in-user show --query objectId -o tsv
 ```
 
-Rather than store credentials in your `feature_store.yaml` file, we recommend using environment variables:
-
-```bash
-export SQL_CONN='mssql+pyodbc://<USER_NAME>:<PASSWORD>@<SERVER_NAME>.database.windows.net:1433/<DB_NAME>?driver=ODBC+Driver+17+for+SQL+Server&autocommit=True'
-
-export REDIS_CONN='<CACHE_NAME>.redis.cache.windows.net:6380,password=<PASSWORD>,ssl=True'
-```
-
-Update the `feature_store.yaml`:
-
-```yaml
-project: production
-registry: 
-    registry_store_type: feast_azure_provider.registry_store.AzBlobRegistryStore
-    path: https://<ACCOUNT_NAME>.blob.core.windows.net/<CONTAINER>/<PATH>/registry.db
-provider: feast_azure_provider.azure_provider.AzureProvider
-offline_store:
-    type: feast_azure_provider.mssqlserver.MsSqlServerOfflineStore
-    connection_string: ${SQL_CONN}
-online_store:
-    type: redis
-    connection_string: ${REDIS_CONN}
-```
-
-### 3. Register your feature definitions and set up your feature store
-
-```bash
-feast apply
-```
-
-### 4. Build a training dataset
-
-```python
-from feast import FeatureStore
-import pandas as pd
-from datetime import datetime
-
-entity_df = pd.DataFrame.from_dict({
-    "entity_id": [], # list of entities e.g. customer_id
-    "event_timestamp": [
-        datetime(2021, 4, 12, 10, 59, 42),
-        # list of datetimes
-    ]
-})
-
-store = FeatureStore(repo_path=".")
-
-training_df = store.get_historical_features(
-    entity_df=entity_df,
-    features = [
-        'featureview1:feature1',
-        'featureview1:feature2',
-        'featureview2:feature1'
-    ],
-).to_df()
-
-print(training_df.head())
-
-# Train model
-model = ml.fit(training_df)
-```
-
-### 5. Load feature values into your online store
-
-```bash
-CURRENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%S")
-feast materialize-incremental $CURRENT_TIME
-```
-
-### 6. Read online features at low latency
-
-```python
-from pprint import pprint
-from feast import FeatureStore
-
-store = FeatureStore(repo_path=".")
-
-feature_vector = store.get_online_features(
-    features=[
-        'featureview1:feature1',
-        'featureview1:feature2',
-        'featureview2:feature1'
-    ],
-    entity_rows=[{"entity_id": 1001}] # for example: driver_id, customer_id
-).to_dict()
-
-pprint(feature_vector)
-
-# Make prediction
-# model.predict(feature_vector)
-```
-
-
-## 🎓 Learn more
-
-- [Feast website](http://feast.dev)
-- [Feast on Azure tutorial](./tutorial/README.md)
 
 ## Contributing
 

@@ -17,6 +17,29 @@ The _interoperable_ design of feast means that many Azure services can be used t
 
 For more details, including setup please navigate to the [provider directory in this repo](./provider/README.md)
 
+### 🐱‍👤 Getting Started
+
+If you want to install locally:
+
+```bash
+pip install feast-azure-provider
+```
+
+We recommend the [getting started tutorial](./tutorial/README.md) that walks you through an end-to-end example.
+
+You can deploy the infrastructure for feast using:
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Ffeast-azure%2Fmain%2Fprovider%2Ftutorial%2Fsetup%2Fazuredeploy.json)
+
+The only 2 required parameters during the set-up are:
+
+- **Admin Password** for the the SQL Server being deployed.
+- **Principal ID** this is to set the storage permissions for the feast registry store. You can find the value for this by opening **Cloud Shell** and run the following command:
+
+```bash
+az ad signed-in-user show --query objectId -o tsv
+```
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
