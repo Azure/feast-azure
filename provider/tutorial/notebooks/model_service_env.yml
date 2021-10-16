@@ -11,4 +11,4 @@ dependencies:
         - azureml-defaults
         - azureml-sdk==1.32.0
         - azureml-mlflow==1.32.0
-        - feast-azure-provider==0.1.0
+        - feast-azure-provider

@@ -1,7 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 
-from os import path
+import os
+import pathlib
 from setuptools import find_packages
 
 try:
@@ -10,16 +11,19 @@ except ImportError:
     from distutils.core import setup
 
 # README file from repo root directory
-this_directory = path.abspath(path.dirname(__file__))
-with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
-    LONG_DESCRIPTION = f.read()
+repo_root = str(pathlib.Path(__file__).resolve().parent.parent)
 
+# README file from Feast repo root directory
+README_FILE = os.path.join(repo_root, "README.md")
+with open(README_FILE, "r") as f:
+    LONG_DESCRIPTION = f.read()
 
 setup(
     name="feast-azure-provider",
     author="Microsoft",
-    version="0.1.0",
+    version="0.1.1",
     description="A Feast Azure Provider",
+    URL="https://github.com/Azure/feast-azure",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     python_requires=">=3.7.0",

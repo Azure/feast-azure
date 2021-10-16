@@ -257,7 +257,7 @@ if __name__ == "__main__":
 
     ws = Workspace.from_config()
     kv = ws.get_default_keyvault()
-    connection_string = kv.get_secret("FEAST_SQL_CONN")
+    connection_string = kv.get_secret("FEAST-OFFLINE-STORE-CONN")
 
     orders_table = "orders"
     driver_hourly_table = "driver_hourly"
