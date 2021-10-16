@@ -29,7 +29,7 @@ The only 2 required parameters during the set-up are:
 ```bash
 az ad signed-in-user show --query objectId -o tsv
 ```
-![Deploy to Azure](https://aka.ms/deploytoazurebutton)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Ffeast-azure%2Fmain%2Fprovider%2Ftutorial%2Fsetup%2Fazuredeploy.json)
 
 ![feast architecture](media/feast-tutorial-arch.png)
 
