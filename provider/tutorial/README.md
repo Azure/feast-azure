@@ -2,7 +2,7 @@
 
 In this tutorial you will:
 
-1. Create a feature store with SQL DB (serverless)
+1. Deploy the infrastructure for a feature store (using an ARM template)
 1. Register features into a central feature registry hosted on Blob Storage
 1. Consume features from the feature store to train a model
 1. Materialize features to an Azure cache for redis (online store) for inference
@@ -17,173 +17,43 @@ For this tutorial you will require:
 1. Good working knowledge of Python and ML concepts.
 1. Basic understanding of Azure ML - using notebooks, job submission, etc.
 
-## Architecture
+## 1. Deploy Infrastructure
 
-Below overlays the Azure components used in this tutorial.
+We have created an ARM template that deploys and configures all the infrastructure required to run feast in Azure. This makes the set-up very simple - select the **Deploy to Azure** button below.
 
-![feast architecture](media/arch.png)
+The only 2 required parameters during the set-up are:
 
-## Set up your environment
-
-### Create compute instance
-
-From the [Azure ML studio home page](https://ml.azure.com), select __New__ > __Compute instance__. Follow the on-screen instructions to create a compute instance.
-
-You should give the compute instance a name and choose a size (Standard_DS3_v2 is a good choice). The remaining choices you can leave as the default settings.
-
-In your compute instance, open a terminal, git clone this repo and then:
+- **Admin Password** for the the SQL Server being deployed.
+- **Principal ID** this is to set the storage permissions for the feast registry store. You can find the value for this by opening **Cloud Shell** and run the following command:
 
 ```bash
-cd feast-azure/provider/tutorial
-conda create -n feast-tutorial python=3.8
-conda activate feast-tutorial
-conda install ipykernel
-pip install -r requirements.txt
-python -m ipykernel install --user --name newenv --display-name "Python (feast-tutorial)"
+az ad signed-in-user show --query objectId -o tsv
 ```
+![Deploy to Azure](https://aka.ms/deploytoazurebutton)
 
-### Login to the Azure CLI
+![feast architecture](media/feast-tutorial-arch.png)
 
-The features will be stored in a __serverless__ SQL DB. This is to conserve cost while you learn feast. For additional scale you can swap SQL DB for a Synapse Dedicated SQL Pool (formerly SQL DW).
+The ARM template will not only deploy the infrastructure but it will also:
 
-In your compute instance, open a terminal and login to azure using the following command
+- automatically clone this repository to your compute instance
+- install the feast azure provider on the compute instance
+- set the SQL DB and Redis cache connection strings in the Azure ML default Keyvault.
 
-```bash
-az login
-```
+> **NOTE: It can take up to 20 minutes for the Redis cache to be provisioned.**
 
-Set your resource group name and Azure location (e.g. westeurope). These will be used in further steps below.
-
-```bash
-# Set the resource group name and location for your server
-resourceGroupName=myResourceGroup
-location=eastus
-```
-
-### Create a SQL DB (Offline Store)
-
-
-```bash
-# Set an admin login and password for your database
-adminlogin=azureuser
-password=Azure1234567!
-
-# Set a server name that is unique to Azure DNS
-serverName=server-$RANDOM
-echo "Variable serverName is set to $serverName"
-
-# a databasename
-sqldbName=fsoffline-$RANDOM
-echo "Variable sqldbName is set to $sqldbName"
-
-# create resource group
-az group create --name $resourceGroupName --location $location
-
-az sql server create \
-    --name $serverName \
-    --resource-group $resourceGroupName \
-    --location $location  \
-    --admin-user $adminlogin \
-    --admin-password $password
-
-# Create a firewall rule that allows access from Azure services
-az sql server firewall-rule create \
-    -g $resourceGroupName \
-    -s $serverName \
-    -n myrule \
-    --start-ip-address 0.0.0.0 \
-    --end-ip-address 0.0.0.0
-
-az sql db create \
-    --resource-group $resourceGroupName \
-    --server $serverName \
-    --name $sqldbName \
-    --edition GeneralPurpose \
-    --compute-model Serverless \
-    --family Gen5 \
-    --capacity 2
-```
-
-### Create Azure Cache for Redis (online store)
-
-For accessing features for real-time inference we use an Azure Cache for Redis. In this tutorial we use a basic instance to conserve cost.
-
-```bash
-# a redis name
-redisName=fsonline-$RANDOM
-echo "Variable redisName is set to $redisName"
-
-az redis create \
-    --location $location \
-    --name $redisName \
-    --resource-group $resourceGroupName \
-    --sku Basic \
-    --vm-size c1 \
-```
-
-### Blob Account and container to host registry.db file
-
-You need a blob account to host the registry.db file - this stores the feature meta data. Use the following:
-
-```bash
-# a blob account name
-storageAccountName=fsblob$RANDOM
-echo "Variable storageAccountName is set to $storageAccountName"
-
-az storage account create \
-    --name $storageAccountName \
-    --resource-group $resourceGroupName \
-    --location $location \
-    --sku Standard_ZRS \
-    --encryption-services blob
-```
-
-Next create the container and assign _Storage Blob Data Contributor_ role to your Azure login:
-
-```bash
-# a container name
-containerName=feast-registry
-
-subId=$(az account show --query id | sed -e 's/^"//' -e 's/"$//')
-
-az ad signed-in-user show --query objectId -o tsv | az role assignment create \
-    --role "Storage Blob Data Contributor" \
-    --assignee @- \
-    --scope "/subscriptions/$subId/resourceGroups/$resourceGroupName/providers/Microsoft.Storage/storageAccounts/$storageAccountName"
-
-az storage container create \
-    --account-name $storageAccountName \
-    --name $containerName \
-    --auth-mode login
-```
-
-### Add your connection strings to the Azure ML keyvault
-
-With all the infrastructure set up, in the same terminal session as above you can set secrets in your Azure ML keyvault using the utility python script in this repo.
-
-```bash
-FEAST_SQL_CONN="mssql+pyodbc://$adminlogin:$password@$serverName.database.windows.net:1433/$sqldbName?driver=ODBC+Driver+17+for+SQL+Server&autocommit=True"
-
-# get redis password
-redisKey=$(sed -e 's/^"//' -e 's/"$//' <<<$(az redis list-keys --name $redisName -g $resourceGroupName --query primaryKey))
-
-FEAST_REDIS_CONN=$redisName.redis.cache.windows.net:6380,password=$redisKey,ssl=True
-
-cd setup
-python set_secrets.py --feast_sql_conn $FEAST_SQL_CONN --feast_redis_conn $FEAST_REDIS_CONN
-```
-
-### Load features into Feature Store
-
-Feast does not handle transformations nor loading of data into your feature store - this occurs outside of feast. You can use ADF, Azure ML Pipelines, SQL, Azure Functions, etc to manage the orchestration of feature creation and loading.
+### 2. Load feature values into Feature Store
 
 For this tutorial, we will create and load features into the store using a python script. 
 
-In your compute instance, open a terminal and run the following:
+In the [Azure Machine Learning Studio](https://ml.azure.com), navigate to the left-hand menu and select **Compute**. You should see your compute instance running, select **Terminal**
+
+![compute instance terminal](./media/ci.png)
+
+In the terminal you need to execute a python script that will load dummy data into our feature store:
 
 ```bash
-conda activate feast-tutorial
-cd setup
+conda activate azureml_py38
+cd feast-azure/provider/tutorial/setup
 python load_data.py
 ```
 
