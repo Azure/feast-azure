@@ -4,9 +4,7 @@ In this tutorial you will:
 
 1. Deploy the infrastructure for a feature store (using an ARM template)
 1. Register features into a central feature registry hosted on Blob Storage
-1. Consume features from the feature store to train a model
-1. Materialize features to an Azure cache for redis (online store) for inference
-1. Create a real-time endpoint that consumes features from the online store.
+1. Consume features from the feature store for training and inference
 
 ## Prerequisites
 
@@ -53,15 +51,17 @@ In the terminal you need to execute a python script that will load dummy data in
 
 ```bash
 conda activate azureml_py38
-cd feast-azure/provider/tutorial/setup
+cd ../feast-azure/provider/tutorial/setup
 python load_data.py
 ```
 
-## Register features in Feature store
+## 3.Register features in Feature store
 
-Follow the `notebooks/01-register-features.ipynb` notebook to register features into the central feast registry.db file.
+In the Azure ML Studio, open the [01-register-features.ipynb](notebooks/01-register-features.ipynb) notebook. __Ensure that the jupyter kernel is set to Python 3.8 - AzureML__:
 
-## Train and Deploy a model using the Feature Store
+![compute instance kernel](./media/ci-kernel.png)
 
-Follow the `notebooks/02-train-and-deploy-with-feast` notebook to understand how to train and deploy a model using feast.
+## 4.Train and Deploy a model using the Feature Store
+
+In the Azure ML Studio, open the [02-train-and-deploy-with-feast](notebooks/02-train-and-deploy-with-feast.ipynb) notebook. __Again, ensure that the jupyter kernel is set to Python 3.8 - AzureML__.
 
