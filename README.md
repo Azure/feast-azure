@@ -25,7 +25,7 @@ If you want to install locally:
 pip install feast-azure-provider
 ```
 
-We recommend the [getting started tutorial](./tutorial/README.md) that walks you through an end-to-end example.
+We recommend the [getting started tutorial](./provider/tutorial/README.md) that walks you through an end-to-end example.
 
 You can deploy the infrastructure for feast using:
 
