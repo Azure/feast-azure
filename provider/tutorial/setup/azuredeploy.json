@@ -314,7 +314,7 @@
                     "apiVersion": "2019-09-01",
                     "location": "[resourceGroup().location]",
                     "properties": {
-                        "value": "[concat(parameters('redisCacheName'),'redis.cache.windows.net:6380,password=',listKeys(concat('Microsoft.Cache/redis/', parameters('redisCacheName')), providers('Microsoft.Cache', 'Redis').apiVersions[0]).primaryKey, ',ssl=True')]"
+                        "value": "[concat(parameters('redisCacheName'),'.redis.cache.windows.net:6380,password=',listKeys(concat('Microsoft.Cache/redis/', parameters('redisCacheName')), providers('Microsoft.Cache', 'Redis').apiVersions[0]).primaryKey, ',ssl=True')]"
                     },
                     "dependsOn": [
                         "[variables('keyVault')]",
