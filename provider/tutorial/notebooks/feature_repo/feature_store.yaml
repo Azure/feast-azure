@@ -1,6 +1,6 @@
 registry:
   registry_store_type: feast_azure_provider.registry_store.AzBlobRegistryStore
-  path: https://<ACCOUNT_NAME>.blob.core.windows.net/<CONTAINER_NAME>/<DIRECTORY>/registry.db
+  path: ${REGISTY_PATH}
 project: production
 provider: feast_azure_provider.azure_provider.AzureProvider
 online_store:

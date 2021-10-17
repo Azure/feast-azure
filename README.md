@@ -27,11 +27,11 @@ We recommend the [getting started tutorial](provider/tutorial/) that walks you t
 
 You can deploy the infrastructure for feast using:
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Ffeast-azure%2Fmain%2Fprovider%2Ftutorial%2Fsetup%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Ffeast-azure%2Fmain%2Fprovider%2Fcloud%2Ffs_synapse_azuredeploy.json)
 
 The only 2 required parameters during the set-up are:
 
-- **Admin Password** for the the SQL Server being deployed.
+- **Admin Password** for the the Dedicated SQL Pool being deployed.
 - **Principal ID** this is to set the storage permissions for the feast registry store. You can find the value for this by opening **Cloud Shell** and run the following command:
 
 ```bash

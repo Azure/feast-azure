@@ -21,23 +21,23 @@ We have created an ARM template that deploys and configures all the infrastructu
 
 The only 2 required parameters during the set-up are:
 
-- **Admin Password** for the the SQL Server being deployed.
+- **Admin Password** for the the Dedicated SQL Pool being deployed.
 - **Principal ID** this is to set the storage permissions for the feast registry store. You can find the value for this by opening **Cloud Shell** and run the following command:
 
 ```bash
 az ad signed-in-user show --query objectId -o tsv
 ```
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Ffeast-azure%2Fmain%2Fprovider%2Ftutorial%2Fsetup%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Ffeast-azure%2Fmain%2Fprovider%2Fcloud%2Ffs_synapse_azuredeploy.json)
 
-![feast architecture](media/feast-tutorial-arch.png)
+![feast architecture](media/arch.png)
 
 The ARM template will not only deploy the infrastructure but it will also:
 
 - automatically clone this repository to your compute instance
 - install the feast azure provider on the compute instance
-- set the SQL DB and Redis cache connection strings in the Azure ML default Keyvault.
+- set the Registry Blob path, Dedicated SQL Pool and Redis cache connection strings in the Azure ML default Keyvault.
 
-> **NOTE: It can take up to 20 minutes for the Redis cache to be provisioned.**
+> **☕ It can take up to 20 minutes for the Redis cache to be provisioned. ☕**
 
 ### 2. Load feature values into Feature Store
 
@@ -51,7 +51,7 @@ In the terminal you need to execute a python script that will load dummy data in
 
 ```bash
 conda activate azureml_py38
-cd ../feast-azure/provider/tutorial/setup
+cd ../feast-azure/provider/tutorial/notebooks
 python load_data.py
 ```
 
