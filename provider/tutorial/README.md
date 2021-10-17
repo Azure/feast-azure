@@ -33,7 +33,6 @@ az ad signed-in-user show --query objectId -o tsv
 
 The ARM template will not only deploy the infrastructure but it will also:
 
-- automatically clone this repository to your compute instance
 - install the feast azure provider on the compute instance
 - set the Registry Blob path, Dedicated SQL Pool and Redis cache connection strings in the Azure ML default Keyvault.
 
@@ -47,13 +46,17 @@ In the [Azure Machine Learning Studio](https://ml.azure.com), navigate to the le
 
 ![compute instance terminal](./media/ci.png)
 
-In the terminal you need to execute a python script that will load dummy data into our feature store:
+In the terminal you need to clone this GitHub repo and execute a python script that will load dummy data into our feature store:
 
 ```bash
+git clone https://github.com/Azure/feast-azure
 conda activate azureml_py38
-cd ../feast-azure/provider/tutorial/notebooks
-python load_data.py
+cd feast-azure/provider/tutorial/notebooks
+python 00_load_data.py
 ```
+
+> ⚠️You will need to wait until your Synapse Dedicated SQL Pool has been provisioned before executing this script.
+
 
 ## 3.Register features in Feature store
 
