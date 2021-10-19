@@ -3,16 +3,12 @@
 
 import numpy as np
 import pandas as pd
-import os
 from datetime import datetime, timedelta
 from pytz import FixedOffset, timezone, utc
 from random import randint
 from enum import Enum
 from sqlalchemy import create_engine, DateTime
 from datetime import datetime
-from azureml.core import Workspace
-import pymssql
-import pyodbc
 
 DEFAULT_ENTITY_DF_EVENT_TIMESTAMP_COL = "event_timestamp"
 
@@ -231,9 +227,8 @@ def generate_entities(date, n_customers, n_drivers, order_count):
     return customer_entities, driver_entities, end_date, orders_df, start_date
 
 
-def save_df_to_sql(df, table_name, dtype):
-    engine = create_engine(connection_string, fast_executemany=True)
-    df.to_sql(table_name, con=engine, if_exists="replace", index=False, dtype=dtype)
+def save_df_to_csv(df, table_name, dtype):
+    df.to_csv(table_name+".csv", index=False)
 
 
 if __name__ == "__main__":
@@ -255,18 +250,15 @@ if __name__ == "__main__":
 
     print(drivers_df.head())
 
-    ws = Workspace.from_config()
-    kv = ws.get_default_keyvault()
-    connection_string = kv.get_secret("FEAST-OFFLINE-STORE-CONN")
 
     orders_table = "orders"
     driver_hourly_table = "driver_hourly"
     customer_profile_table = "customer_profile"
 
     print("uploading orders")
-    save_df_to_sql(orders_df, orders_table, dtype={"event_timestamp": DateTime()})
+    save_df_to_csv(orders_df, orders_table, dtype={"event_timestamp": DateTime()})
     print("uploading drivers")
-    save_df_to_sql(drivers_df, driver_hourly_table, dtype={"datetime": DateTime()})
+    save_df_to_csv(drivers_df, driver_hourly_table, dtype={"datetime": DateTime()})
     print("uploading customers")
-    save_df_to_sql(customer_df, customer_profile_table, dtype={"datetime": DateTime()})
+    save_df_to_csv(customer_df, customer_profile_table, dtype={"datetime": DateTime()})
 
