@@ -14,73 +14,6 @@
                 "description": "Specifies the principal ID assigned to the role. You can find in cloud shell using 'az ad signed-in-user show --query objectId -o tsv'"
             }
         },
-        "allowAllConnections": {
-            "type": "string",
-            "allowedValues": [
-                "true",
-                "false"
-            ],
-            "defaultValue": "true",
-            "metadata": {
-                "description": "Specifies whether to allow client IPs to connect to Synapse"
-            }
-        },
-        "administratorLogin": {
-            "type": "string",
-            "metadata": {
-                "description": "The administrator username of the SQL logical server."
-            },
-            "defaultValue": "azureuser"
-        },
-        "location": {
-            "type": "string",
-            "metadata": {
-                "description": "description"
-            },
-            "defaultValue": "[resourceGroup().location]"
-        },
-        "registryBlobStore": {
-            "type": "string",
-            "metadata": {
-                "description": "Storage account to host the feast registry db"
-            },
-            "defaultValue": "[concat('fsregistry',uniqueString(resourceGroup().id))]"
-        },
-        "redisCacheName": {
-            "type": "string",
-            "metadata": {
-                "description": "Redis Cache Name"
-            },
-            "defaultValue": "[concat('fsonline',uniqueString(resourceGroup().id))]"
-        },
-        "amlWorkspaceName": {
-            "type": "string",
-            "metadata": {
-                "description": "description"
-            },
-            "defaultValue": "[concat('mlws',uniqueString(resourceGroup().id))]"
-        },
-        "vmSize": {
-            "type": "string",
-            "metadata": {
-                "description": "description"
-            },
-            "defaultValue": "Standard_DS3_v2"
-        },
-        "roleDefinitionID": {
-            "type": "string",
-            "metadata": {
-                "description": "Specifies the role definition ID used in the role assignment. Defaults to Storage Blob Data Contributor."
-            },
-            "defaultValue": "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
-        },
-        "synapseName": {
-            "type": "string",
-            "metadata": {
-                "description": "description"
-            },
-            "defaultValue": "[concat('sy',uniqueString(resourceGroup().id))]"
-        },
         "sku": {
             "type": "string",
             "defaultValue": "DW100c",
@@ -99,25 +32,62 @@
             "metadata": {
                 "description": "Select the SKU of the SQL pool."
             }
+        },
+        "allowAllConnections": {
+            "type": "string",
+            "allowedValues": [
+                "true",
+                "false"
+            ],
+            "defaultValue": "true",
+            "metadata": {
+                "description": "Specifies whether to allow client IPs to connect to Synapse"
+            }
+        },
+        "administratorLogin": {
+            "type": "string",
+            "metadata": {
+                "description": "The administrator username of the SQL logical server."
+            },
+            "defaultValue": "azureuser"
+        },
+        "vmSize": {
+            "type": "string",
+            "metadata": {
+                "description": "description"
+            },
+            "defaultValue": "Standard_DS3_v2"
+        },
+        "roleDefinitionID": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the role definition ID used in the role assignment. Defaults to Storage Blob Data Contributor."
+            },
+            "defaultValue": "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
         }
     },
     "functions": [],
     "variables": {
+        "location": "[resourceGroup().location]",
         "tenantId": "[subscription().tenantId]",
+        "registryBlobStore": "[concat('fsregistry',uniqueString(resourceGroup().id))]",
+        "redisCacheName": "[concat('fsonline',uniqueString(resourceGroup().id))]",
+        "amlWorkspaceName": "[concat('ml',uniqueString(resourceGroup().id))]",
+        "synapseName": "[concat('sy',uniqueString(resourceGroup().id))]",
         "storageAccountName": "[concat('st', uniqueString(resourceGroup().id))]",
         "keyVaultName": "[concat('kv-', uniqueString(resourceGroup().id))]",
         "applicationInsightsName": "[concat('appi-', uniqueString(resourceGroup().id))]",
         "containerRegistryName": "[concat('cr', uniqueString(resourceGroup().id))]",
         "storageAccount": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-        "registryAccount": "[resourceId('Microsoft.Storage/storageAccounts', parameters('registryBlobStore'))]",
+        "registryAccount": "[resourceId('Microsoft.Storage/storageAccounts', variables('registryBlobStore'))]",
         "keyVault": "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
         "applicationInsights": "[resourceId('Microsoft.Insights/components', variables('applicationInsightsName'))]",
         "containerRegistry": "[resourceId('Microsoft.ContainerRegistry/registries', variables('containerRegistryName'))]",
-        "redisCache": "[resourceId('Microsoft.Cache/redis', parameters('redisCacheName'))]",
+        "redisCache": "[resourceId('Microsoft.Cache/redis', variables('redisCacheName'))]",
         "roleAssignmentName": "[guid(parameters('principalId'), parameters('roleDefinitionID'), resourceGroup().id)]",
         "sqlPoolName": "[toLower(concat(variables('workspaceName'),'p1'))]",
-        "workspaceName": "[toLower(concat(parameters('synapseName'),'ws1'))]",
-        "dlsName": "[toLower(concat('dls',parameters('synapseName')))]",
+        "workspaceName": "[toLower(concat(variables('synapseName'),'ws1'))]",
+        "dlsName": "[toLower(concat('dls',variables('synapseName')))]",
         "dlsFsName": "[toLower(concat(variables('dlsName'),'fs1'))]"
     },
     "resources": [
@@ -125,7 +95,7 @@
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2021-01-01",
             "name": "[variables('storageAccountName')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "sku": {
                 "name": "Standard_RAGRS"
             },
@@ -149,7 +119,7 @@
             "type": "Microsoft.KeyVault/vaults",
             "apiVersion": "2021-04-01-preview",
             "name": "[variables('keyVaultName')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "properties": {
                 "tenantId": "[variables('tenantId')]",
                 "sku": {
@@ -178,7 +148,7 @@
                     "apiVersion": "2019-09-01",
                     "location": "[resourceGroup().location]",
                     "properties": {
-                        "value": "[concat('https://',parameters('registryBlobStore'),'.blob.core.windows.net/fs-reg-container/registry.db')]"
+                        "value": "[concat('https://',variables('registryBlobStore'),'.blob.core.windows.net/fs-reg-container/registry.db')]"
                     },
                     "dependsOn": [
                         "[variables('keyVault')]"
@@ -190,7 +160,7 @@
             "type": "Microsoft.Insights/components",
             "apiVersion": "2020-02-02",
             "name": "[variables('applicationInsightsName')]",
-            "location": "[if(or(equals(parameters('location'),'eastus2'), equals(parameters('location'),'westcentralus')),'southcentralus',parameters('location'))]",
+            "location": "[if(or(equals(variables('location'),'eastus2'), equals(variables('location'),'westcentralus')),'southcentralus',variables('location'))]",
             "kind": "web",
             "properties": {
                 "Application_Type": "web"
@@ -204,7 +174,7 @@
             },
             "name": "[variables('containerRegistryName')]",
             "apiVersion": "2019-12-01-preview",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "properties": {
                 "adminUserEnabled": true
             }
@@ -212,7 +182,7 @@
         {
             "type": "Microsoft.MachineLearningServices/workspaces",
             "apiVersion": "2021-04-01",
-            "name": "[parameters('amlWorkspaceName')]",
+            "name": "[variables('amlWorkspaceName')]",
             "location": "[resourceGroup().location]",
             "identity": {
                 "type": "SystemAssigned"
@@ -235,12 +205,12 @@
             "resources": [
                 {
                     "type": "Microsoft.MachineLearningServices/workspaces/computes",
-                    "name": "[concat(parameters('amlWorkspaceName'), '/', concat('ci-',uniqueString(resourceGroup().id)))]",
+                    "name": "[concat(variables('amlWorkspaceName'), '/', concat('ci-',uniqueString(resourceGroup().id)))]",
                     "apiVersion": "2021-07-01",
                     "dependsOn": [
-                        "[resourceId('Microsoft.MachineLearningServices/workspaces', concat(parameters('amlWorkspaceName')))]"
+                        "[resourceId('Microsoft.MachineLearningServices/workspaces', concat(variables('amlWorkspaceName')))]"
                     ],
-                    "location": "[parameters('location')]",
+                    "location": "[variables('location')]",
                     "properties": {
                         "computeType": "ComputeInstance",
                         "properties": {
@@ -259,7 +229,7 @@
             ]
         },
         {
-            "name": "[parameters('registryBlobStore')]",
+            "name": "[variables('registryBlobStore')]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2021-04-01",
             "tags": {
@@ -287,7 +257,7 @@
         },
         {
             "type": "Microsoft.Cache/redis",
-            "name": "[parameters('redisCacheName')]",
+            "name": "[variables('redisCacheName')]",
             "apiVersion": "2020-12-01",
             "location": "[resourceGroup().location]",
             "tags": {
@@ -307,7 +277,7 @@
                     "apiVersion": "2019-09-01",
                     "location": "[resourceGroup().location]",
                     "properties": {
-                        "value": "[concat(parameters('redisCacheName'),'.redis.cache.windows.net:6380,password=',listKeys(concat('Microsoft.Cache/redis/', parameters('redisCacheName')), providers('Microsoft.Cache', 'Redis').apiVersions[0]).primaryKey, ',ssl=True')]"
+                        "value": "[concat(variables('redisCacheName'),'.redis.cache.windows.net:6380,password=',listKeys(concat('Microsoft.Cache/redis/', variables('redisCacheName')), providers('Microsoft.Cache', 'Redis').apiVersions[0]).primaryKey, ',ssl=True')]"
                     },
                     "dependsOn": [
                         "[variables('keyVault')]",
@@ -333,7 +303,7 @@
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-06-01",
             "name": "[variables('dlsName')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "sku": {
                 "name": "Standard_LRS"
             },
@@ -361,7 +331,7 @@
             "type": "Microsoft.Synapse/workspaces",
             "apiVersion": "2019-06-01-preview",
             "name": "[variables('workspaceName')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "identity": {
                 "type": "SystemAssigned"
             },
@@ -384,7 +354,7 @@
                     "type": "firewallrules",
                     "apiVersion": "2019-06-01-preview",
                     "name": "allowAll",
-                    "location": "[parameters('location')]",
+                    "location": "[variables('location')]",
                     "dependsOn": [ "[variables('workspaceName')]" ],
                     "properties": {
                         "startIpAddress": "0.0.0.0",
@@ -395,7 +365,7 @@
                     "type": "firewallrules",
                     "apiVersion": "2019-06-01-preview",
                     "name": "AllowAllWindowsAzureIps",
-                    "location": "[parameters('location')]",
+                    "location": "[variables('location')]",
                     "dependsOn": [ "[variables('workspaceName')]" ],
                     "properties": {
                         "startIpAddress": "0.0.0.0",
@@ -406,7 +376,7 @@
                     "type": "managedIdentitySqlControlSettings",
                     "apiVersion": "2019-06-01-preview",
                     "name": "default",
-                    "location": "[parameters('location')]",
+                    "location": "[variables('location')]",
                     "dependsOn": [ "[variables('workspaceName')]" ],
                     "properties": {
                         "grantSqlControlToManagedIdentity": {
@@ -420,7 +390,7 @@
             "type": "Microsoft.Synapse/workspaces/sqlPools",
             "apiVersion": "2019-06-01-preview",
             "name": "[concat(variables('workspaceName'), '/', variables('sqlPoolName'))]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "sku": {
                 "name": "[parameters('sku')]"
             },
