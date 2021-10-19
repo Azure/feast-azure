@@ -83,7 +83,7 @@
         },
         "sku": {
             "type": "string",
-            "defaultValue": "DW200c",
+            "defaultValue": "DW100c",
             "allowedValues": [
                 "DW100c",
                 "DW200c",

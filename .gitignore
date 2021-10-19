@@ -351,3 +351,9 @@ MigrationBackup/
 
 # Playground
 playground/
+
+# azureml workspace config
+config.json
+
+# any data files
+*.csv
