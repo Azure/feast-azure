@@ -1,5 +1,5 @@
 feast==0.9.5.2
-cryptography==3.1
+cryptography==3.3.2
 flake8
 black==19.10b0
 isort>=5
