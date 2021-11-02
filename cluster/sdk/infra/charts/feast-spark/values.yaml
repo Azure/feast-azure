@@ -1,0 +1,3 @@
+feast-jobservice:
+  # feast-jobservice.enabled -- Flag to install Feast Job Service
+  enabled: true

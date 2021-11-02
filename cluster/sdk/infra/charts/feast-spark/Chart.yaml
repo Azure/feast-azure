@@ -1,0 +1,4 @@
+apiVersion: v1
+description: Feast Extension for running Ingestion on Spark
+name: feast-spark
+version: 0.2.12

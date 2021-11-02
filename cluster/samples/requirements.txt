@@ -1,0 +1,9 @@
+git+https://github.com/Azure/feast-azure.git#subdirectory=cluster/sdk/python
+confluent_kafka
+avro
+gcsfs
+pytz
+pyarrow
+pandas
+numpy
+azure-synapse-spark

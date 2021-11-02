@@ -37,6 +37,14 @@ The only 2 required parameters during the set-up are:
 ```bash
 az ad signed-in-user show --query objectId -o tsv
 ```
+## Feast on Azure Kubernetes Service (AKS)
+The [Feast on AKS](./cluster/README.md) is a secure enterprise deployment on a customer provisioned AKS cluster in an Azure VNET. This deployment does not expose any public endpoints and leverages Azure Private Link over the Feast core and serving so that the traffic flows over the Microsoft Network. This deployment also supports secure connectivity from Azure Synapse Analytics and Azure Machine Learning via private endpoints.
+### 📐 Architecture
+
+![Feast on AKS architecture](cluster/media/architecture.png)
+
+### 🐱‍👤 Getting Started
+Please refer to [Feast on AKS](./cluster/README.md) which will walkthrough the instructions to setup, install the required packages and then run the sample from Azure Synapse Analytics and Azure Machine Learning.
 
 ## Contributing
 

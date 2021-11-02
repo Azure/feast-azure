@@ -1,0 +1,56 @@
+feast-jobservice:
+  image:
+    tag: ${IMAGE_TAG}
+  envOverrides:
+    FEAST_CORE_URL: feast-release-feast-core:6565
+    FEAST_SPARK_LAUNCHER: k8s
+    FEAST_SPARK_K8S_NAMESPACE: sparkop-e2e
+    FEAST_SPARK_K8S_USE_INCLUSTER_CONFIG: True
+    FEAST_TELEMETRY: False
+    FEAST_SPARK_STAGING_LOCATION: gs://feast-templocation-kf-feast
+    FEAST_REDIS_HOST: feast-release-redis-master
+    FEAST_REDIS_PORT: 6379
+    FEAST_JOB_SERVICE_ENABLE_CONTROL_LOOP: False
+    FEAST_SPARK_INGESTION_JAR: local:///opt/spark/jars/feast-ingestion-spark-${IMAGE_TAG}.jar
+
+  sparkOperator:
+    enabled: true
+    jobTemplate:
+      apiVersion: "sparkoperator.k8s.io/v1beta2"
+      kind: SparkApplication
+      spec:
+        type: Scala
+        mode: cluster
+        image: "gcr.io/kf-feast/feast-spark:${IMAGE_TAG}"
+        hadoopConf:
+          "fs.gs.project.id": "kf-feast"
+          "google.cloud.auth.service.account.enable": "true"
+          "google.cloud.auth.service.account.json.keyfile": "/mnt/secrets/credentials.json"
+        sparkVersion: "3.0.2"
+        timeToLiveSeconds: 3600
+        pythonVersion: "3"
+        restartPolicy:
+          type: Never
+        driver:
+          cores: 1
+          coreLimit: "1200m"
+          memory: "600m"
+          labels:
+            version: 3.0.2
+          javaOptions: "-Dio.netty.tryReflectionSetAccessible=true -Dcom.google.cloud.spark.bigquery.repackaged.io.netty.tryReflectionSetAccessible=true"
+          secrets:
+            - name: feast-gcp-service-account
+              path: /mnt/secrets
+              secretType: GCPServiceAccount
+        executor:
+          cores: 1
+          instances: 1
+          memory: "800m"
+          labels:
+            version: 3.0.2
+          javaOptions: "-Dio.netty.tryReflectionSetAccessible=true -Dcom.google.cloud.spark.bigquery.repackaged.io.netty.tryReflectionSetAccessible=true"
+          secrets:
+            - name: feast-gcp-service-account
+              path: /mnt/secrets
+              secretType: GCPServiceAccount
+
