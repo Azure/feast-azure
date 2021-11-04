@@ -2,7 +2,6 @@
 # Licensed under the MIT license.
 
 import os
-
 import logging
 import json
 import joblib
@@ -13,24 +12,26 @@ from feast.infra.online_stores.redis import RedisOnlineStoreConfig, RedisOnlineS
 
 
 def init():
-
     sql_conn_str = os.getenv("FEAST_SQL_CONN")
     redis_conn_str = os.getenv("FEAST_REDIS_CONN")
     feast_registry_path = os.getenv("FEAST_REGISTRY_BLOB")
 
+    print("connecting to registry...")
     reg_config = RegistryConfig(
         registry_store_type="feast_azure_provider.registry_store.AzBlobRegistryStore",
         path=feast_registry_path,
     )
 
+    print("connecting to repo config...")
     repo_cfg = RepoConfig(
         project="production",
         provider="feast_azure_provider.azure_provider.AzureProvider",
         registry=reg_config,
         offline_store=MsSqlServerOfflineStoreConfig(connection_string=sql_conn_str),
-        online_store=RedisOnlineStore(connection_string=redis_conn_str),
+        online_store=RedisOnlineStoreConfig(connection_string=redis_conn_str),
     )
     global store
+    print("connecting to feature store...")
     store = FeatureStore(config=repo_cfg)
 
     global model
@@ -39,6 +40,7 @@ def init():
     model_path = os.path.join(os.getenv("AZUREML_MODEL_DIR"), "model/model.pkl")
     # deserialize the model file back into a sklearn model
     model = joblib.load(model_path)
+    print("read model, init complete")
 
 
 def run(raw_data):
