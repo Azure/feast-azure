@@ -21,7 +21,7 @@ with open(README_FILE, "r") as f:
 setup(
     name="feast-azure-provider",
     author="Microsoft",
-    version="0.2.0",
+    version="0.2.1",
     description="A Feast Azure Provider",
     URL="https://github.com/Azure/feast-azure",
     long_description=LONG_DESCRIPTION,
@@ -29,7 +29,7 @@ setup(
     python_requires=">=3.7.0",
     packages=find_packages(exclude=("tests",)),
     install_requires=[
-        "feast==0.15",
+        "feast==0.15.1",
         "azure-storage-blob>=0.37.0",
         "azure-identity>=1.6.1" "SQLAlchemy>=1.4.19",
         "dill==0.3.4",
