@@ -28,7 +28,7 @@ jobs:
           --outdir dist/
           provider/sdk  
       - name: Publish distribution to Test PyPI
-        if: ! startsWith(github.ref, 'refs/heads/v')
+        if: "!startsWith(github.ref, 'refs/heads/v')"
         uses: pypa/gh-action-pypi-publish@master
         with:
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
