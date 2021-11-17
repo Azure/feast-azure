@@ -210,7 +210,7 @@
                                 "scripts": {
                                     "creationScript": {
                                         "scriptSource": "inline",
-                                        "scriptData": "[base64('conda activate azureml_py38;pip install feast-azure-provider;pip install pymssql;cd /home/azureuser/cloudfiles/code/Users;git clone https://github.com/Azure/feast-azure')]"
+                                        "scriptData": "[base64('conda activate azureml_py38;pip install feast-azure-provider;pip install pymssql')]"
                                     }
                                 }
                             }
