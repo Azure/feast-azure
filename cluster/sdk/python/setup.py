@@ -153,7 +153,7 @@ setup(
         "Programming Language :: Python :: 3.6",
     ],
     entry_points={"console_scripts": ["feast-spark=feast_spark.cli:cli"]},
-    use_scm_version={"root": "../", "relative_to": __file__, "tag_regex": TAG_REGEX},
+    use_scm_version={"root": "../../..", "relative_to": __file__, "tag_regex": TAG_REGEX},
     setup_requires=["setuptools_scm", "grpcio-tools==1.31.0", "google-auth==1.21.1", "feast==0.9.5.2", "mypy-protobuf==2.5"],
     cmdclass={
         "build_proto": BuildProtoCommand,
