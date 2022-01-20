@@ -242,7 +242,7 @@
                 "tier": "Standard"
             },
             "properties": {
-                "allowBlobPublicAccess": false
+                "allowBlobPublicAccess": true
             },
             "resources": [
                 {
@@ -322,7 +322,7 @@
                         "[variables('dlsName')]"
                     ],
                     "properties": {
-                        "publicAccess": "None"
+                        "publicAccess": "Container"
                     }
                 }
             ]
