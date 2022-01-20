@@ -23,7 +23,7 @@ setup(
     author="Microsoft",
     version="0.2.29",
     description="A Feast Azure Provider",
-    URL="https://github.com/Azure/feast-azure",
+    URL="https://github.com/cbtham/feast-azure",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     python_requires=">=3.7.0",
