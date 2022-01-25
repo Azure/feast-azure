@@ -7,7 +7,7 @@ This guide lists thesteps you to backup and restore feast in your environment.
 *PostgreSQL host ip*
 It can be found in the Azure portal. Go to the AKS where Feast is deployed, select “Services and ingresses” in the left side menu. Look for a service called “feast-release-postgresql”. You can type or paste in the full name in the filter text box. Record the cluster IP.
 
-![Postgre SQL IP](./images/feast_backup_restore/feastbackuprestore1.PNG)
+![Postgre SQL IP](./images/feast_backup_restore/feastbackuprestore1.png)
 
 *PostgreSQL password*
 It will be the password you provided when configuring the Feast service
