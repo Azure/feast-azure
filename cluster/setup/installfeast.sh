@@ -80,8 +80,7 @@ az aks install-cli
 az aks get-credentials --resource-group $resourceGroup --name $aksName --overwrite-existing
 
 echo "INFO: Add feast charts"
-helm repo add feast-charts https://feast-helm-charts.storage.googleapis.com
-helm repo update
+helm repo add feast-charts https://feast-charts.storage.googleapis.com
 
 echo "INFO: Install feast"
 kubectl create secret generic feast-postgresql --from-literal=postgresql-password="${sqlPassword}"
