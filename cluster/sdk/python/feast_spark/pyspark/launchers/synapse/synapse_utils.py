@@ -148,6 +148,12 @@ class SynapseJobRunner(object):
         executor_cores = EXECUTOR_SIZE[self._executor_size]['Cores']
         executor_memory = EXECUTOR_SIZE[self._executor_size]['Memory']
 
+        # This is needed to correctly set the spark properties needed by org.apache.hadoop.fs.azure.NativeAzureFileSystem
+        # Please see: https://github.com/Azure/feast-azure/issues/41
+        if "FEAST_AZURE_BLOB_ACCOUNT_NAME" in os.environ and "FEAST_AZURE_BLOB_ACCOUNT_ACCESS_KEY" in os.environ:
+          blob_configuration = {f'spark.hadoop.fs.azure.account.key.{os.environ["FEAST_AZURE_BLOB_ACCOUNT_NAME"]}.blob.core.windows.net': os.environ["FEAST_AZURE_BLOB_ACCOUNT_ACCESS_KEY"]}
+          configuration = blob_configuration if configuration is None else configuration.update(blob_configuration)
+
         # SDK source code is here: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/synapse/azure-synapse
         # Exact code is here: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/synapse/azure-synapse-spark/azure/synapse/spark/operations/_spark_batch_operations.py#L114
         # Adding spaces between brackets. This is to workaround this known YARN issue (when running Spark on YARN):
