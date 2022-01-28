@@ -79,12 +79,11 @@ az aks install-cli
 
 az aks get-credentials --resource-group $resourceGroup --name $aksName --overwrite-existing
 
-echo "INFO: Add feast charts"
-helm repo add feast-charts https://feast-charts.storage.googleapis.com
-
-echo "INFO: Install feast"
 kubectl create secret generic feast-postgresql --from-literal=postgresql-password="${sqlPassword}"
-helm install feast-release feast-charts/feast
+
+echo "INFO: Install feast from local charts that contains updated rbac apis"
+helm install feast-release ./feast-0.9.5-helmchart
+
 
 timeout=0
 while true
