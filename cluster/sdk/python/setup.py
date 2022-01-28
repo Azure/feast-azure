@@ -57,6 +57,7 @@ REQUIRED = [
     "azure-identity",
     "azure-storage-file-datalake",
     "azure-storage-blob",
+    "db-dtypes",
 ]
 
 # README file from Feast repo root directory
