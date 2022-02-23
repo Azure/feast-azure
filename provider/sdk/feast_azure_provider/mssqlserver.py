@@ -113,6 +113,43 @@ class MsSqlServerOfflineStore(OfflineStore):
             on_demand_feature_views=None,
         )
 
+    def pull_all_from_table_or_query(
+        self,
+        config: RepoConfig,
+        data_source: DataSource,
+        join_key_columns: List[str],
+        feature_name_columns: List[str],
+        event_timestamp_column: str,
+        start_date: datetime,
+        end_date: datetime,
+    ) -> RetrievalJob:
+        assert type(data_source).__name__ == "MsSqlServerSource"
+        assert (
+            config.offline_store.type
+            == "feast_azure_provider.mssqlserver.MsSqlServerOfflineStore"
+        )
+        from_expression = data_source.get_table_query_string().replace("`", "")
+
+        field_string = ", ".join(join_key_columns + feature_name_columns + timestamps)
+
+        query = f"""
+            SELECT {field_string}
+            FROM (
+                SELECT {field_string}
+                FROM {from_expression}
+                WHERE {event_timestamp_column} BETWEEN TIMESTAMP '{start_date}' AND TIMESTAMP '{end_date}'
+            )
+            """
+        self._make_engine(config.offline_store)
+        
+        return MsSqlServerRetrievalJob(
+            query=query,
+            engine=self._engine,
+            config=config,
+            full_feature_names=False,
+        )
+
+
     def get_historical_features(
         self,
         config: RepoConfig,
