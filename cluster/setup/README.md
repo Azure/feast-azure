@@ -7,6 +7,8 @@ Before you proceed, here are prerequisites to install feast in your Azure subscr
 - An Existing virtual network (VNET) and subnet.
 - Azure Kubernetes (AKS) cluster in that VNET.
 
+__PLEASE NOTE: Currently we only support Kubernetes version 1.21.7, which is default version for AKS.__
+
 You can jump to the [install feast section](#-steps-to-install-feast) if you already have the prerequisite resources.
 
 Here are the commands to create VNET and AKS cluster in that VNET. For more details refer to the documentation [here](https://docs.microsoft.com/en-us/azure/aks/configure-kubenet).

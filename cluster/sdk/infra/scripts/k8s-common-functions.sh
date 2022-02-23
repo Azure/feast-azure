@@ -125,7 +125,7 @@ function setup_sparkop_role {
 
     cat <<EOF | kubectl apply -f -
 kind: Role
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: use-spark-operator
   namespace: sparkop
@@ -134,7 +134,7 @@ rules:
   resources: ["sparkapplications"]
   verbs: ["create", "delete", "deletecollection", "get", "list", "update", "watch", "patch"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: use-spark-operator

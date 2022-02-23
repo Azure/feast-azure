@@ -1,0 +1,33 @@
+dependencies:
+- name: feast-core
+  repository: ""
+  version: 0.9.5
+- name: feast-serving
+  repository: ""
+  version: 0.9.5
+- name: feast-jupyter
+  repository: ""
+  version: 0.9.5
+- name: feast-jobservice
+  repository: ""
+  version: 0.9.5
+- name: postgresql
+  repository: https://charts.helm.sh/stable
+  version: 8.6.1
+- name: kafka
+  repository: https://charts.bitnami.com/bitnami/
+  version: 11.8.8
+- name: redis
+  repository: https://charts.helm.sh/stable
+  version: 10.5.6
+- name: prometheus-statsd-exporter
+  repository: ""
+  version: 0.1.2
+- name: prometheus
+  repository: https://charts.helm.sh/stable
+  version: 11.0.2
+- name: grafana
+  repository: https://charts.helm.sh/stable
+  version: 5.0.5
+digest: sha256:1f0bbae98f90aba789ad565342827f2a794be6c853f89001ac5e9615b7693790
+generated: "2021-04-15T07:48:57.279776106Z"
