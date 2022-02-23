@@ -21,7 +21,7 @@ with open(README_FILE, "r") as f:
 setup(
     name="feast-azure-provider",
     author="Microsoft",
-    version="0.2.29",
+    version="0.2.297",
     description="A Feast Azure Provider",
     URL="https://github.com/cbtham/feast-azure",
     long_description=LONG_DESCRIPTION,
