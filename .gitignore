@@ -357,3 +357,8 @@ config.json
 
 # any data files
 *.csv
+
+# ignore python distrubution build folder
+provider/sdk/build/
+provider/sdk/dist/
+provider/sdk/feast_azure_provider.egg-info
