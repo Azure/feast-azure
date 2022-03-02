@@ -85,7 +85,7 @@ class BuildProtoCommand(Command):
         import feast
 
         self.protoc = ["python", "-m", "grpc_tools.protoc"]  # find_executable("protoc")
-        self.proto_folder = os.path.join(repo_root, "protos")
+        self.proto_folder = os.path.join(repo_root, "cluster", "sdk", "protos")
         self.this_package = os.path.dirname(__file__) or os.getcwd()
         self.feast_protos = os.path.join(os.path.dirname(feast.__file__), 'protos')
         self.sub_folders = ["api"]
@@ -153,7 +153,7 @@ setup(
         "Programming Language :: Python :: 3.6",
     ],
     entry_points={"console_scripts": ["feast-spark=feast_spark.cli:cli"]},
-    use_scm_version={"root": "../", "relative_to": __file__, "tag_regex": TAG_REGEX},
+    use_scm_version={"root": "../../../", "relative_to": __file__, "tag_regex": TAG_REGEX},
     setup_requires=["setuptools_scm", "grpcio-tools==1.31.0", "google-auth==1.21.1", "feast==0.9.5.2", "mypy-protobuf==2.5"],
     cmdclass={
         "build_proto": BuildProtoCommand,
