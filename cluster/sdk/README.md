@@ -3,7 +3,7 @@
 This is a fork of [feast-spark pacakge](https://github.com/feast-dev/feast-spark). This pacakge can be installed by executing this line (tested with Python 3.8 and Linux):
 
 ```bash
-pip install git+https://github.com/xiaoyongzhu/feast-spark.git#subdirectory=python
+pip install git+https://github.com/Azure/feast-azure.git#subdirectory=cluster/sdk/python
 ```
 
 Contains
