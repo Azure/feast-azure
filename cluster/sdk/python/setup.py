@@ -85,9 +85,9 @@ class BuildProtoCommand(Command):
         import feast
 
         self.protoc = ["python", "-m", "grpc_tools.protoc"]  # find_executable("protoc")
-        self.proto_folder = os.path.join(repo_root, "protos")
+        self.proto_folder = os.path.join(repo_root, "cluster", "sdk", "protos")
         self.this_package = os.path.dirname(__file__) or os.getcwd()
-        self.feast_protos = os.path.join(os.path.dirname(feast.__file__), 'protos')
+        self.feast_protos = os.path.join(os.path.dirname(feast.__file__), 'cluster','sdk', 'protos')
         self.sub_folders = ["api"]
 
     def finalize_options(self):
