@@ -21,9 +21,9 @@ with open(README_FILE, "r", encoding="mbcs") as f:
 setup(
     name="feast-azure-provider",
     author="Microsoft",
-    version="0.2.297",
+    version="0.2.299",
     description="A Feast Azure Provider",
-    URL="https://github.com/cbtham/feast-azure",
+    URL="https://github.com/azure/feast-azure",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     python_requires=">=3.7.0",
@@ -35,9 +35,9 @@ setup(
         "SQLAlchemy>=1.4.19",
         "dill==0.3.4",
         "pyodbc>=4.0.30",
-        "sqlalchemy>=1.4",
     ],
-    extras_require={"dev": ["pytest", "mypy", "assertpy"]},
+    extras_require={"dev": ["pytest", "mypy", "assertpy"]
+                    "snowflake": ["snowflake-connector-python[pandas]>=2.7.3"]},
     # https://stackoverflow.com/questions/28509965/setuptools-development-requirements
     # Install dev requirements with: pip install -e .[dev]
     include_package_data=True,
