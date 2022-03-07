@@ -29,7 +29,7 @@ setup(
     python_requires=">=3.7.0",
     packages=find_packages(exclude=("tests",)),
     install_requires=[
-        "feast[redis]~=0.18",
+        "feast[redis]==0.18.1",
         "azure-storage-blob>=0.37.0",
         "azure-identity>=1.6.1",
         "SQLAlchemy>=1.4.19",
