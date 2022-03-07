@@ -29,14 +29,14 @@ setup(
     python_requires=">=3.7.0",
     packages=find_packages(exclude=("tests",)),
     install_requires=[
-        "feast[redis]~=0.18.0",
+        "feast[redis]~=0.18",
         "azure-storage-blob>=0.37.0",
         "azure-identity>=1.6.1",
         "SQLAlchemy>=1.4.19",
         "dill==0.3.4",
         "pyodbc>=4.0.30",
     ],
-    extras_require={"dev": ["pytest", "mypy", "assertpy"]
+    extras_require={"dev": ["pytest", "mypy", "assertpy"],
                     "snowflake": ["snowflake-connector-python[pandas]>=2.7.3"]},
     # https://stackoverflow.com/questions/28509965/setuptools-development-requirements
     # Install dev requirements with: pip install -e .[dev]
