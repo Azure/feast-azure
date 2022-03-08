@@ -114,6 +114,7 @@ class ConfigOptions(metaclass=ConfigMeta):
     # https://github.com/Azure/azure-event-hubs-for-kafka/blob/master/tutorials/spark/sparkConsumer.scala
     AZURE_EVENTHUB_KAFKA_CONNECTION_STRING = ""
     
+    
     # Databricks: Access Token
     DATABRICKS_ACCESS_TOKEN: Optional[str] = None
     
