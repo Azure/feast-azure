@@ -400,10 +400,10 @@ class DatabricksJobLauncher(JobLauncher):
             self, ingestion_job_params: ScheduledBatchIngestionJobParameters
     ):
         raise NotImplementedError(
-            "Schedule spark jobs are not supported by emr launcher"
+            "Schedule spark jobs are not supported by Databricks launcher"
         )
     
     def unschedule_offline_to_online_ingestion(self, project: str, feature_table: str):
         raise NotImplementedError(
-            "Unschedule spark jobs are not supported by emr launcher"
+            "Unschedule spark jobs are not supported by Databricks launcher"
         )
