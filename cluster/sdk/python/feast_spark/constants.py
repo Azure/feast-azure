@@ -39,12 +39,12 @@ class ConfigOptions(metaclass=ConfigMeta):
 
     #: Spark Job launcher. The choice of storage is connected to the choice of SPARK_LAUNCHER.
     #:
-    #: Options: "standalone", "dataproc", "emr"
+    #: Options: "standalone", "dataproc", "emr", "databricks"
     SPARK_LAUNCHER: Optional[str] = None
 
     #: Feast Spark Job ingestion jobs staging location. The choice of storage is connected to the choice of SPARK_LAUNCHER.
     #:
-    #: Eg. gs://some-bucket/output/, s3://some-bucket/output/, file:///data/subfolder/
+    #: Eg. gs://some-bucket/output/, s3://some-bucket/output/, file:///data/subfolder/, dbfs:/mnt/subfolder
     SPARK_STAGING_LOCATION: Optional[str] = None
 
     #: Feast Spark Job ingestion jar file. The choice of storage is connected to the choice of SPARK_LAUNCHER.
