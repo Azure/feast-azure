@@ -94,6 +94,26 @@ def _synapse_launcher(config: Config) -> JobLauncher:
         executors=int(config.get(opt.AZURE_SYNAPSE_EXECUTORS))
     )
 
+def _databricks_launcher(config: Config) -> JobLauncher:
+    from feast_spark.pyspark.launchers import databricks
+
+    staging_location = config.get(opt.SPARK_STAGING_LOCATION)
+    staging_uri = urlparse(staging_location)
+
+    return databricks.DatabricksJobLauncher(
+        databricks_access_token=config.get(opt.DATABRICKS_ACCESS_TOKEN),
+        databricks_host_url=config.get(opt.DATABRICKS_HOST_URL),
+        staging_client=get_staging_client(staging_uri.scheme, config),
+        databricks_common_cluster_id=config.get(opt.DATABRICKS_COMMON_CLUSTER_ID),
+        databricks_streaming_cluster_id=config.get(opt.DATABRICKS_STREAMING_CLUSTER_ID, None),
+        databricks_max_active_jobs_to_retrieve=config.getint(opt.DATABRICKS_MAXIMUM_RUNS_TO_RETRIEVE, None),
+        mounted_staging_location=config.get(opt.DATABRICKS_MOUNTED_STORAGE_PATH, None),
+        azure_account_name=config.get(opt.AZURE_BLOB_ACCOUNT_NAME, None),
+        azure_account_key=config.get(opt.AZURE_BLOB_ACCOUNT_ACCESS_KEY, None),
+        staging_location=staging_location
+    )
+
+
 
 _launchers = {
     "standalone": _standalone_launcher,
@@ -101,6 +121,7 @@ _launchers = {
     "emr": _emr_launcher,
     "k8s": _k8s_launcher,
     'synapse': _synapse_launcher,
+    'databricks': _databricks_launcher,
 }
 
 

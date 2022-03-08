@@ -94,7 +94,7 @@ class ConfigOptions(metaclass=ConfigMeta):
     SPARK_K8S_JOB_TEMPLATE_PATH = None
 
     # Synapse dev url
-    AZURE_SYNAPSE_DEV_URL: Optional[str] = None 
+    AZURE_SYNAPSE_DEV_URL: Optional[str] = None
 
     # Synapse pool name
     AZURE_SYNAPSE_POOL_NAME: Optional[str] = None
@@ -110,10 +110,28 @@ class ConfigOptions(metaclass=ConfigMeta):
 
     # Azure EventHub Connection String (with Kafka API). See more details here:
     # https://docs.microsoft.com/en-us/azure/event-hubs/apache-kafka-migration-guide
-    # Code Sample is here: 
+    # Code Sample is here:
     # https://github.com/Azure/azure-event-hubs-for-kafka/blob/master/tutorials/spark/sparkConsumer.scala
     AZURE_EVENTHUB_KAFKA_CONNECTION_STRING = ""
-
+    
+    # Databricks: Access Token
+    DATABRICKS_ACCESS_TOKEN: Optional[str] = None
+    
+    # Databricks: Host (https included URL of the databricks workspace)
+    DATABRICKS_HOST_URL: Optional[str] = None
+    
+    # Databricks: Common Cluster Id
+    DATABRICKS_COMMON_CLUSTER_ID: Optional[str] = None
+    
+    # Databricks: Dedicated Streaming Cluster Id [Optional Dedicated Cluster for streaming use-cases]
+    DATABRICKS_STREAMING_CLUSTER_ID: Optional[str] = None
+    
+    # Databricks: Maximum runs to retrieve
+    DATABRICKS_MAXIMUM_RUNS_TO_RETRIEVE: Optional[str] = None
+    
+    # Databricks: Mounted Storage Path (Ex: /mnt/)
+    DATABRICKS_MOUNTED_STORAGE_PATH: Optional[str] = None
+    
     #: File format of historical retrieval features
     HISTORICAL_FEATURE_OUTPUT_FORMAT: str = "parquet"
 

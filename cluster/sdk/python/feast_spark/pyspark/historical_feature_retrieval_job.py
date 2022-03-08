@@ -623,10 +623,18 @@ def filter_feature_table_by_time_range(
 def _read_and_verify_entity_df_from_source(
     spark: SparkSession, source: Source
 ) -> DataFrame:
+    spark_path = source.spark_path
+
+    # Handle read for databricks mounted storage
+    if mounted_staging_location is not None:
+        print(f"Using Databricks Mounted path:{mounted_staging_location}")
+        relative_path = source.spark_path.rsplit("/", 1)[1] if not source.spark_path.endswith(
+            "/") else source.spark_path.rsplit("/", 2)[1]
+        spark_path = mounted_staging_location + relative_path
     entity_df = (
         spark.read.format(source.spark_format)
         .options(**source.spark_read_options)
-        .load(source.spark_path)
+        .load(spark_path)
     )
 
     mapped_entity_df = _map_column(entity_df, source.field_mapping)
@@ -860,6 +868,10 @@ def _get_args():
     parser.add_argument(
         "--destination", type=str, help="Retrieval result destination in json string"
     )
+    parser.add_argument(
+        "--mounted_staging_location", type=str, help="dbfs mounted staging path for verifying entity_source "
+                                                     "(Only for databricks)", default=""
+    )
     parser.add_argument("--checkpoint", type=str, help="Spark Checkpoint location")
     return parser.parse_args()
 
@@ -882,6 +894,10 @@ def json_b64_decode(s: str) -> Any:
     return json.loads(b64decode(s.encode("ascii")))
 
 
+def b64_decode(obj: str) -> str:
+    return str(b64decode(obj.encode("ascii")).decode("ascii"))
+
+
 if __name__ == "__main__":
     spark = SparkSession.builder.getOrCreate()
     args = _get_args()
@@ -889,6 +905,8 @@ if __name__ == "__main__":
     feature_tables_sources_conf = json_b64_decode(args.feature_tables_sources)
     entity_source_conf = json_b64_decode(args.entity_source)
     destination_conf = json_b64_decode(args.destination)
+    mounted_staging_location = b64_decode(args.mounted_staging_location) if not b64_decode(
+        args.mounted_staging_location) == "" else None
     if args.checkpoint:
         spark.sparkContext.setCheckpointDir(args.checkpoint)
 
@@ -903,4 +921,7 @@ if __name__ == "__main__":
     except Exception as e:
         logger.exception(e)
         raise e
-    spark.stop()
+    
+    # Databricks clusters do not allow this
+    if mounted_staging_location is None:
+        spark.stop()
