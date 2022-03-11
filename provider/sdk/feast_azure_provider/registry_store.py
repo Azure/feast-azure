@@ -37,6 +37,17 @@ class AzBlobRegistryStore(RegistryStore):
             # turn the verbosity of the blob client to warning and above (this reduces verbosity)
             logger = logging.getLogger("azure")
             logger.setLevel(logging.ERROR)
+
+            # Attempt to use shared account key to login first
+            if 'REGISTRY_BLOB_KEY' in os.environ:
+                client = BlobServiceClient(
+                    account_url=self._account_url, credential=os.environ['REGISTRY_BLOB_KEY']
+                )
+                self.blob = client.get_blob_client(
+                    container=self._container, blob=self._path
+                )
+                return
+
             default_credential = DefaultAzureCredential(
                 exclude_shared_token_cache_credential=True
             )
