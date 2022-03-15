@@ -361,25 +361,37 @@ def _upload_entity_df_into_sqlserver_and_get_entity_schema(
     table_id = offline_utils.get_temp_entity_table_name()
     session = sessionmaker(bind=engine)()
 
-    # TODO: Support a Pandas dataframe as input.
     if type(entity_df) is str:
         # TODO: This should be a temporary table, right?
         session.execute(f"SELECT * INTO {table_id} FROM ({entity_df}) t")
+
+        session.commit()
+
+        limited_entity_df = MsSqlServerRetrievalJob(
+            f"SELECT TOP 1 * FROM {table_id}",
+            engine,
+            config,
+            full_feature_names=False,
+            on_demand_feature_views=None,
+        ).to_df()
+
+        entity_schema = dict(zip(limited_entity_df.columns, limited_entity_df.dtypes)), table_id
+
+    elif isinstance(entity_df, pandas.DataFrame):
+        # Drop the index so that we don't have unnecessary columns
+        entity_df.to_sql(
+            name=table_id,
+            con=engine,
+            index=False
+        )
+        entity_schema = dict(zip(entity_df.columns, entity_df.dtypes)), table_id
     else:
         raise ValueError(
-            f"The entity dataframe you have provided must be a SQL Server SQL query, "
-            f"but we found: {type(entity_df)} "
+            f"The entity dataframe you have provided must be a SQL Server SQL query,"
+            f" or a Pandas dataframe. But we found: {type(entity_df)} "
         )
-    session.commit()
 
-    limited_entity_df = MsSqlServerRetrievalJob(
-        f"SELECT TOP 1 * FROM {table_id}",
-        engine,
-        config,
-        full_feature_names=False,
-        on_demand_feature_views=None,
-    ).to_df()
-    return dict(zip(limited_entity_df.columns, limited_entity_df.dtypes)), table_id
+    return entity_schema
 
 
 def get_feature_view_query_context(
