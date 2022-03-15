@@ -35,6 +35,18 @@ The only 2 required parameters during the set-up are:
 az ad signed-in-user show --query objectId -o tsv
 ```
 
+## Note
+If you would like to recompile a custom version of feast-azure-provider, go to provider/sdk where setup.py is located, run  
+```bash
+python setup.py bdist_wheel --universal
+```
+to generate an installable .egg file.
+
+If you would like to install or run a custom version of feast-azure-provider, go to provider/sdk where setup.py is located, run  
+```bash
+python setup.py install
+```
+
 
 ## Contributing
 

@@ -28,7 +28,11 @@ from feast import errors
 from feast.data_source import DataSource
 from .mssqlserver_source import MsSqlServerSource
 from feast.feature_view import FeatureView
-from feast.infra.offline_stores.offline_store import OfflineStore
+from feast.infra.offline_stores.offline_store import (
+    OfflineStore,
+    RetrievalJob,
+    RetrievalMetadata,
+)
 from feast.infra.offline_stores.offline_utils import (
     DEFAULT_ENTITY_DF_EVENT_TIMESTAMP_COL,
 )
@@ -38,6 +42,8 @@ from feast.infra.provider import (
 )
 from feast.registry import Registry
 from feast.repo_config import FeastBaseModel, RepoConfig
+from feast.saved_dataset import SavedDatasetStorage
+from feast import FileSource
 
 EntitySchema = Dict[str, np.dtype]
 
@@ -112,6 +118,43 @@ class MsSqlServerOfflineStore(OfflineStore):
             full_feature_names=False,
             on_demand_feature_views=None,
         )
+
+    def pull_all_from_table_or_query(
+        self,
+        config: RepoConfig,
+        data_source: DataSource,
+        join_key_columns: List[str],
+        feature_name_columns: List[str],
+        event_timestamp_column: str,
+        start_date: datetime,
+        end_date: datetime,
+    ) -> RetrievalJob:
+        assert type(data_source).__name__ == "MsSqlServerSource"
+        assert (
+            config.offline_store.type
+            == "feast_azure_provider.mssqlserver.MsSqlServerOfflineStore"
+        )
+        from_expression = data_source.get_table_query_string().replace("`", "")
+
+        field_string = ", ".join(join_key_columns + feature_name_columns + timestamps)
+
+        query = f"""
+            SELECT {field_string}
+            FROM (
+                SELECT {field_string}
+                FROM {from_expression}
+                WHERE {event_timestamp_column} BETWEEN TIMESTAMP '{start_date}' AND TIMESTAMP '{end_date}'
+            )
+            """
+        self._make_engine(config.offline_store)
+        
+        return MsSqlServerRetrievalJob(
+            query=query,
+            engine=self._engine,
+            config=config,
+            full_feature_names=False,
+        )
+
 
     def get_historical_features(
         self,
@@ -241,6 +284,7 @@ class MsSqlServerRetrievalJob(RetrievalJob):
         config: RepoConfig,
         full_feature_names: bool,
         on_demand_feature_views: Optional[List[OnDemandFeatureView]],
+        metadata: Optional[RetrievalMetadata] = None,
         drop_columns: Optional[List[str]] = None,
     ):
         self.query = query
@@ -249,6 +293,7 @@ class MsSqlServerRetrievalJob(RetrievalJob):
         self._full_feature_names = full_feature_names
         self._on_demand_feature_views = on_demand_feature_views
         self._drop_columns = drop_columns
+        self._metadata = metadata
 
     @property
     def full_feature_names(self) -> bool:
@@ -264,6 +309,29 @@ class MsSqlServerRetrievalJob(RetrievalJob):
     def _to_arrow_internal(self) -> pyarrow.Table:
         result = pandas.read_sql(self.query, con=self.engine).fillna(value=np.nan)
         return pyarrow.Table.from_pandas(result)
+    
+    ## Implements persist in Feast 0.18 - This persists to filestorage
+    ## ToDo: Persist to Azure Storage 
+    def persist(self, storage: SavedDatasetStorage):
+        assert isinstance(storage, SavedDatasetFileStorage)
+
+        filesystem, path = FileSource.create_filesystem_and_path(
+            storage.file_options.file_url, storage.file_options.s3_endpoint_override,
+        )
+
+        if path.endswith(".parquet"):
+            pyarrow.parquet.write_table(
+                self.to_arrow(), where=path, filesystem=filesystem
+            )
+        else:
+            # otherwise assume destination is directory
+            pyarrow.parquet.write_to_dataset(
+                self.to_arrow(), root_path=path, filesystem=filesystem
+            )
+
+    @property
+    def metadata(self) -> Optional[RetrievalMetadata]:
+        return self._metadata
 
 
 @dataclass(frozen=True)
