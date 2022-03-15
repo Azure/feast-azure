@@ -11,6 +11,7 @@ RUN apt-get install -y gcc
 RUN apt-get install -y unixodbc-dev
 
 RUN pip install 'azureml-defaults==1.35.0' \
-                'feast-azure-provider==0.2.2' \
+                'feast-azure-provider==0.3.0' \
                 'scikit-learn==0.22.2.post1' \
-		        'joblib===1.1.0'
+		        'joblib===1.1.0' \
+                'itsdangerous==2.0.1'
