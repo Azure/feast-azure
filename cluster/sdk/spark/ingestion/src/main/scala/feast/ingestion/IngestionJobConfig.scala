@@ -128,5 +128,6 @@ case class IngestionJobConfig(
     validationConfig: Option[ValidationConfig] = None,
     doNotIngestInvalidRows: Boolean = false,
     checkpointPath: Option[String] = None,
-    kafkaSASL: Option[String] = None
+    kafkaSASL: Option[String] = None,
+    isDatabricksRuntime: Boolean = false
 )

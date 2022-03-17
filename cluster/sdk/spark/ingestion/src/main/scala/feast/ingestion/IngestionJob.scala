@@ -119,6 +119,9 @@ object IngestionJob {
     opt[Int](name = "triggering-interval")
       .action((x, c) => c.copy(streamingTriggeringSecs = x))
 
+    opt[Unit](name = "databricks-runtime")
+      .action((_, c) => c.copy(isDatabricksRuntime = true))
+
     opt[String](name = "kafka_sasl_auth")
       .action((x, c) => c.copy(kafkaSASL = Some(x)))
   }
@@ -146,7 +149,9 @@ object IngestionJob {
                 logger.fatal("Batch ingestion failed", e)
                 throw e
             } finally {
-              sparkSession.close()
+              if (!config.isDatabricksRuntime) {
+                sparkSession.close()
+              }
             }
           case Modes.Online =>
             val sparkSession = BasePipeline.createSparkSession(config)
@@ -157,7 +162,9 @@ object IngestionJob {
                 logger.fatal("Streaming ingestion failed", e)
                 throw e
             } finally {
-              sparkSession.close()
+              if (!config.isDatabricksRuntime) {
+                sparkSession.close()
+              }
             }
         }
       case None =>
