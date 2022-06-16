@@ -26,8 +26,10 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from feast import errors
 from feast.data_source import DataSource
+
 from .mssqlserver_source import MsSqlServerSource
 from feast.feature_view import FeatureView
+from feast.infra.offline_stores.file_source import SavedDatasetFileStorage
 from feast.infra.offline_stores.offline_store import (
     OfflineStore,
     RetrievalJob,
@@ -135,7 +137,7 @@ class MsSqlServerOfflineStore(OfflineStore):
             == "feast_azure_provider.mssqlserver.MsSqlServerOfflineStore"
         )
         from_expression = data_source.get_table_query_string().replace("`", "")
-
+        timestamps = [event_timestamp_column]
         field_string = ", ".join(join_key_columns + feature_name_columns + timestamps)
 
         query = f"""

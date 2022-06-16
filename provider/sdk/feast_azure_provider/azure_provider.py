@@ -1,14 +1,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 import pandas
 import pyarrow as pa
 from tqdm import tqdm
 
+from feast import FeatureService
 from feast.entity import Entity
+from feast.feature_logging import FeatureServiceLoggingSource
 from feast.feature_view import FeatureView
 from feast.infra.offline_stores.offline_store import RetrievalJob
 from feast.infra.offline_stores.offline_utils import get_offline_store_from_config
@@ -24,6 +26,8 @@ from feast.protos.feast.types.Value_pb2 import Value as ValueProto
 from feast.registry import Registry
 from feast.repo_config import RepoConfig
 from feast.saved_dataset import SavedDataset
+from feast.usage import RatioSampler, log_exceptions_and_usage, set_usage_attribute
+from feast.utils import make_tzaware
 
 DEFAULT_BATCH_SIZE = 10_000
 
@@ -78,6 +82,7 @@ class AzureProvider(Provider):
         if self.online_store:
             self.online_store.online_write_batch(config, table, data, progress)
 
+    @log_exceptions_and_usage(sampler=RatioSampler(ratio=0.001))
     def online_read(
         self,
         config: RepoConfig,
@@ -198,3 +203,49 @@ class AzureProvider(Provider):
             end_date=make_tzaware(dataset.max_event_timestamp + timedelta(seconds=1)),  # type: ignore
         )
 
+    def write_feature_service_logs(
+        self,
+        feature_service: FeatureService,
+        logs: Union[pa.Table, str],
+        config: RepoConfig,
+        registry: Registry,
+    ):
+        assert (
+            feature_service.logging_config is not None
+        ), "Logging should be configured for the feature service before calling this function"
+
+        self.offline_store.write_logged_features(
+            config=config,
+            data=logs,
+            source=FeatureServiceLoggingSource(feature_service, config.project),
+            logging_config=feature_service.logging_config,
+            registry=registry,
+        )
+
+    def retrieve_feature_service_logs(
+        self,
+        feature_service: FeatureService,
+        start_date: datetime,
+        end_date: datetime,
+        config: RepoConfig,
+        registry: Registry,
+    ) -> RetrievalJob:
+        assert (
+            feature_service.logging_config is not None
+        ), "Logging should be configured for the feature service before calling this function"
+
+        logging_source = FeatureServiceLoggingSource(feature_service, config.project)
+        schema = logging_source.get_schema(registry)
+        logging_config = feature_service.logging_config
+        ts_column = logging_source.get_log_timestamp_column()
+        columns = list(set(schema.names) - {ts_column})
+
+        return self.offline_store.pull_all_from_table_or_query(
+            config=config,
+            data_source=logging_config.destination.to_data_source(),
+            join_key_columns=[],
+            feature_name_columns=columns,
+            timestamp_field=ts_column,
+            start_date=make_tzaware(start_date),
+            end_date=make_tzaware(end_date),
+        )
