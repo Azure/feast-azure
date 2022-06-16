@@ -45,7 +45,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install db-dtypes
-          cd ./feast
+          cd feast
           make install-python-ci-dependencies
           cd ..
       - name: Run Feast unit tests
