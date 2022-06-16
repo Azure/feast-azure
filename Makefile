@@ -3,6 +3,9 @@
 
 # Python SDK
 
+compile-go-lib: install-go-proto-dependencies install-go-ci-dependencies
+	COMPILE_GO=True python setup.py build_ext --inplace
+
 install-python-ci-dependencies: install-go-proto-dependencies install-go-ci-dependencies
 	python -m piptools sync feast/sdk/python/requirements/py$(PYTHON)-ci-requirements.txt
 
