@@ -416,7 +416,7 @@ def get_feature_view_query_context(
         join_keys = []
         entity_selections = []
         reverse_field_mapping = {
-            v: k for k, v in feature_view.input.field_mapping.items()
+            v: k for k, v in feature_view.source.field_mapping.items()
         }
         for entity_name in feature_view.entities:
             entity = registry.get_entity(entity_name, project)
@@ -431,17 +431,17 @@ def get_feature_view_query_context(
         else:
             ttl_seconds = 0
 
-        assert isinstance(feature_view.input, MsSqlServerSource)
+        assert isinstance(feature_view.source, MsSqlServerSource)
 
-        event_timestamp_column = feature_view.input.event_timestamp_column
-        created_timestamp_column = feature_view.input.created_timestamp_column
+        event_timestamp_column = feature_view.source.event_timestamp_column
+        created_timestamp_column = feature_view.source.created_timestamp_column
 
         context = FeatureViewQueryContext(
             name=feature_view.name,
             ttl=ttl_seconds,
             entities=join_keys,
             features=features,
-            table_ref=feature_view.input.table_ref,
+            table_ref=feature_view.source.table_ref,
             event_timestamp_column=reverse_field_mapping.get(
                 event_timestamp_column, event_timestamp_column
             ),
@@ -449,7 +449,7 @@ def get_feature_view_query_context(
                 created_timestamp_column, created_timestamp_column
             ),
             # TODO: Make created column optional and not hardcoded
-            table_subquery=feature_view.input.get_table_query_string().replace("`", ""),
+            table_subquery=feature_view.source.get_table_query_string().replace("`", ""),
             entity_selections=entity_selections,
         )
         query_context.append(context)
