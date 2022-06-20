@@ -11,7 +11,7 @@
         "principalId": {
             "type": "string",
             "metadata": {
-                "description": "Specifies the principal ID assigned to the role. You can find in cloud shell using 'az ad signed-in-user show --query objectId -o tsv'"
+                "description": "Specifies the principal ID assigned to the role. You can find in cloud shell using 'az ad signed-in-user show --query id -o tsv'"
             }
         },
         "sku": {
@@ -355,7 +355,9 @@
                     "apiVersion": "2019-06-01-preview",
                     "name": "allowAll",
                     "location": "[variables('location')]",
-                    "dependsOn": [ "[variables('workspaceName')]" ],
+                    "dependsOn": [
+                        "[variables('workspaceName')]"
+                    ],
                     "properties": {
                         "startIpAddress": "0.0.0.0",
                         "endIpAddress": "255.255.255.255"
@@ -366,7 +368,9 @@
                     "apiVersion": "2019-06-01-preview",
                     "name": "AllowAllWindowsAzureIps",
                     "location": "[variables('location')]",
-                    "dependsOn": [ "[variables('workspaceName')]" ],
+                    "dependsOn": [
+                        "[variables('workspaceName')]"
+                    ],
                     "properties": {
                         "startIpAddress": "0.0.0.0",
                         "endIpAddress": "0.0.0.0"
@@ -377,7 +381,9 @@
                     "apiVersion": "2019-06-01-preview",
                     "name": "default",
                     "location": "[variables('location')]",
-                    "dependsOn": [ "[variables('workspaceName')]" ],
+                    "dependsOn": [
+                        "[variables('workspaceName')]"
+                    ],
                     "properties": {
                         "grantSqlControlToManagedIdentity": {
                             "desiredState": "Enabled"
@@ -403,7 +409,5 @@
             }
         }
     ],
-    "outputs": {
-
-    }
+    "outputs": {}
 }
