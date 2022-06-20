@@ -72,3 +72,5 @@ In the Azure ML Studio, select *Notebooks* from the left-hand menu and then open
 In the Azure ML Studio, select *Notebooks* from the left-hand menu and then open the [train and deploy a model using feast notebook](notebooks/part3-train-and-deploy-with-feast.ipynb). Work through this notebook.
 
 > __💁Ensure the Jupyter kernel is set to Python 3.8 - AzureML__
+>
+> If problems are encountered during model training stage, create a new cell and rexecute `!pip install scikit-learn==0.22.1`. Upon completion, restart the Kernel and start over.
