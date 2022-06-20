@@ -24,6 +24,8 @@ We recommend the [getting started tutorial](./tutorial) that walks you through a
 
 You can deploy the infrastructure for feast using:
 
+> You may want to first make sure your subscription has registered `Microsoft.Synapse`, `Microsoft.SQL` and `Microsoft.Network` providers before running the template below, as some of them may require explicit registration.
+
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Ffeast-azure%2Fmain%2Fprovider%2Fcloud%2Ffs_synapse_azuredeploy.json)
 
 The only 2 required parameters during the set-up are:
