@@ -40,8 +40,13 @@ The only 2 required parameters during the set-up are:
 - **Principal ID** this is to set the storage permissions for the feast registry store. You can find the value for this by opening **Cloud Shell** and run the following command:
 
 ```bash
+# If you are using Azure portal CLI or Azure CLI 2.37.0 or above
 az ad signed-in-user show --query id -o tsv
+
+# If you are using Azure CLI below 2.37.0
+az ad signed-in-user show --query objectId -o tsv
 ```
+
 ## Feast on Azure Kubernetes Service (AKS)
 The [Feast on AKS](./cluster/README.md) is a secure enterprise deployment on a customer provisioned AKS cluster in an Azure VNET. This deployment does not expose any public endpoints and leverages Azure Private Link over the Feast core and serving so that the traffic flows over the Microsoft Network. This deployment also supports secure connectivity from Azure Synapse Analytics and Azure Machine Learning via private endpoints.
 ### 📐 Architecture
