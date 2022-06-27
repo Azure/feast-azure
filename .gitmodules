@@ -1,3 +1,4 @@
 [submodule "feast"]
 	path = feast
 	url = https://github.com/feast-dev/feast.git
+	branch = v0.21-branch

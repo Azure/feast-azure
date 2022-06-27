@@ -100,6 +100,10 @@ class MsSqlServerSource(DataSource):
         field_mapping: Optional[Dict[str, str]] = None,
         date_partition_column: Optional[str] = "",
         connection_str: Optional[str] = "",
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        owner: Optional[str] = None,
+        name: Optional[str] = None
     ):
         self._mssqlserver_options = MsSqlServerOptions(
             connection_str=connection_str, table_ref=table_ref
@@ -107,11 +111,15 @@ class MsSqlServerSource(DataSource):
         self._connection_str = connection_str
 
         super().__init__(
-            event_timestamp_column
-            or self._infer_event_timestamp_column("TIMESTAMP|DATETIME"),
-            created_timestamp_column,
-            field_mapping,
-            date_partition_column,
+            created_timestamp_column = created_timestamp_column,
+            field_mapping = field_mapping,
+            date_partition_column = date_partition_column,
+            description = description,
+            tags = tags,
+            owner = owner,
+            name = name,
+            timestamp_field = event_timestamp_column
+            or self._infer_event_timestamp_column("TIMESTAMP|DATETIME")
         )
 
     def __eq__(self, other):
@@ -121,12 +129,20 @@ class MsSqlServerSource(DataSource):
             )
 
         return (
-            self.mssqlserver_options.connection_str
+            self.name == other.name
+            and self.mssqlserver_options.connection_str
             == other.mssqlserver_options.connection_str
-            and self.event_timestamp_column == other.event_timestamp_column
+            and self.timestamp_field == other.timestamp_field
             and self.created_timestamp_column == other.created_timestamp_column
             and self.field_mapping == other.field_mapping
         )
+    
+    def __hash__(self):
+        return hash((
+            self.name,
+            self.mssqlserver_options.connection_str,
+            self.timestamp_field,
+            self.created_timestamp_column))
 
     @property
     def table_ref(self):
@@ -153,7 +169,7 @@ class MsSqlServerSource(DataSource):
             field_mapping=dict(data_source.field_mapping),
             table_ref=options["table_ref"],
             connection_str=options["connection_string"],
-            event_timestamp_column=data_source.event_timestamp_column,
+            event_timestamp_column=data_source.timestamp_field,
             created_timestamp_column=data_source.created_timestamp_column,
             date_partition_column=data_source.date_partition_column,
         )
@@ -165,7 +181,7 @@ class MsSqlServerSource(DataSource):
             custom_options=self.mssqlserver_options.to_proto(),
         )
 
-        data_source_proto.event_timestamp_column = self.event_timestamp_column
+        data_source_proto.timestamp_field = self.timestamp_field
         data_source_proto.created_timestamp_column = self.created_timestamp_column
         data_source_proto.date_partition_column = self.date_partition_column
 
