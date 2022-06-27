@@ -10,8 +10,10 @@ ENV PATH $AZUREML_CONDA_ENVIRONMENT_PATH/bin:$PATH
 RUN apt-get install -y gcc
 RUN apt-get install -y unixodbc-dev
 
-RUN pip install 'azureml-defaults==1.35.0' \
-                'feast-azure-provider==0.3.0' \
-                'scikit-learn==0.22.2.post1' \
-		        'joblib===1.1.0' \
-                'itsdangerous==2.0.1'
+RUN pip install \
+    'protobuf>=3.10,<3.20' \
+    'azureml-defaults==1.42.0' \
+    'feast-azure-provider==0.3.0' \
+    'scikit-learn==0.22.2.post1' \
+    'joblib===1.1.0' \
+    'itsdangerous==2.0.1'

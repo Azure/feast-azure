@@ -24,8 +24,15 @@ The only 2 required parameters during the set-up are:
 - **Principal ID** this is to set the storage permissions for the feast registry store. You can find the value for this by opening **Cloud Shell** and run the following command:
 
 ```bash
+# If you are using Azure portal CLI or Azure CLI 2.37.0 or above
+az ad signed-in-user show --query id -o tsv
+
+# If you are using Azure CLI below 2.37.0
 az ad signed-in-user show --query objectId -o tsv
 ```
+
+> You may want to first make sure your subscription has registered `Microsoft.Synapse`, `Microsoft.SQL` and `Microsoft.Network` providers before running the template below, as some of them may require explicit registration.
+
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Ffeast-azure%2Fmain%2Fprovider%2Fcloud%2Ffs_synapse_azuredeploy.json)
 
 ![feast architecture](media/arch.png)
@@ -69,3 +76,5 @@ In the Azure ML Studio, select *Notebooks* from the left-hand menu and then open
 In the Azure ML Studio, select *Notebooks* from the left-hand menu and then open the [train and deploy a model using feast notebook](notebooks/part3-train-and-deploy-with-feast.ipynb). Work through this notebook.
 
 > __💁Ensure the Jupyter kernel is set to Python 3.8 - AzureML__
+>
+> If problems are encountered during model training stage, create a new cell and rexecute `!pip install scikit-learn==0.22.1`. Upon completion, restart the Kernel and start over.
