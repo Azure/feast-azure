@@ -140,7 +140,7 @@ setup(
     # Install dev requirements with: pip install -e .[dev]
     extras_require={
         "dev": ["mypy-protobuf==1.*", "grpcio-testing==1.*"],
-        "validation": ["great_expectations==0.13.2", "pyspark==3.1.3"],
+        "validation": ["great_expectations==0.13.2", "pyspark==3.2.2"],
     },
     include_package_data=True,
     license="Apache",
